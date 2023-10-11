@@ -46,14 +46,18 @@ const createCategories = (
 };
 
 app.get("/api/category", async (req, res) => {
-  const parentId = req.query.parentId?.toString();
-  if (parentId) {
-    const category = await Category.find({ parentId: parentId });
+  try {
+    const parentId = req.query.parentId?.toString();
+    if (parentId) {
+      const category = await Category.find({ parentId: parentId });
 
-    res.status(200).json(category);
-  } else {
-    const category = await Category.find({});
-    res.status(200).json(category);
+      res.status(200).json(category);
+    } else {
+      const category = await Category.find({});
+      res.status(200).json(category);
+    }
+  } catch (error) {
+    res.status(500);
   }
 });
 
@@ -72,21 +76,32 @@ app.get("/api/categories", async (req, res) => {
 });
 
 app.post("/api/category", async (req, res) => {
-  const name = req.body.name;
-  const parentId = req.body?.parentId ? req.body.parentId : null;
+  try {
+    const name = req.body.name;
+    const parentId = req.body?.parentId ? req.body.parentId : null;
 
-  const category = await Category.create({ name: name, parentId: parentId });
+    const category = await Category.create({ name: name, parentId: parentId });
 
-  res.status(200).json(category);
+    res.status(200).json(category);
+  } catch (error) {
+    res.status(500);
+  }
 });
 
 app.post("/api/product", async (req, res) => {
-  const name = req.body.name;
-  const categoryId = req.body.categoryId;
+  try {
+    const name = req.body.name;
+    const categoryId = req.body.categoryId;
 
-  const product = await Product.create({ name: name, categoryId: categoryId });
+    const product = await Product.create({
+      name: name,
+      categoryId: categoryId,
+    });
 
-  res.status(200).json(product);
+    res.status(200).json(product);
+  } catch (error) {
+    res.status(500);
+  }
 });
 
 const getAllProductsInCategory = async (
@@ -114,13 +129,17 @@ const getAllProductsInCategory = async (
 };
 
 app.get("/api/products", async (req, res) => {
-  const categoryId = req.query.categoryId?.toString();
-  if (categoryId) {
-    const allProducts = await getAllProductsInCategory(categoryId);
-    res.status(200).json(allProducts);
-  } else {
-    const products = await Product.find({});
-    res.status(200).json(products);
+  try {
+    const categoryId = req.query.categoryId?.toString();
+    if (categoryId) {
+      const allProducts = await getAllProductsInCategory(categoryId);
+      res.status(200).json(allProducts);
+    } else {
+      const products = await Product.find({});
+      res.status(200).json(products);
+    }
+  } catch (error) {
+    res.status(500);
   }
 });
 app.listen(process.env.PORT || 5000, () =>
